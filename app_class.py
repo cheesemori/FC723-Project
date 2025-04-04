@@ -12,8 +12,7 @@ class Seat:
         self.status = 0
 
     def __str__(self):
-        if self.status == 0:
-            return str(self.number)
+        return str(self.number)
 
     def turn_available(self):
         if self.status != 0:
