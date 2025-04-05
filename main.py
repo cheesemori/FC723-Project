@@ -1,4 +1,7 @@
 import app_class as c
+import os
+
+os.system("")
 
 seat_lst = []
 seat_lst_for_check = []
@@ -20,7 +23,7 @@ for n in range(0, 4):
 
 
 def check_availability(seat_number):
-    if seat_number in seat_lst_for_check and (seat_number not in ["X", "S", "77D", "77E", "77F", "78D", "78E", "78F"]):
+    if seat_number in seat_lst_for_check:
         if seat_lst[find_seat_index(seat_number)].status == 0:
             print("The seat you choose is available.\n")
         elif seat_lst[find_seat_index(seat_number)].status == 1:
@@ -35,7 +38,7 @@ def check_seat():
     for i in range(4):
         for j in range(7):
             for k in range(20):
-                if seat_lst[lst_index] not in ["X", "S"]:
+                if seat_lst[lst_index] in seat_lst_for_check:
                     if seat_lst[lst_index].status == 0:
                         print(f"\033[92m{seat_lst[lst_index]}\033[0m\t", end="   ")
                     elif seat_lst[lst_index].status == 1:
@@ -56,7 +59,7 @@ def find_seat_index(seat_number):
 
 
 def book_seat(seat_number):
-    if str(seat_number) in ["X", "S", "77D", "77E", "77F", "78D", "78E", "78F"]:
+    if str(seat_number) not in seat_lst_for_check:
         print("The seat you choose is not exist.\n")
     elif seat_lst[find_seat_index(seat_number)].status == 1:
         print("The seat you choose is already occupied.\n")
@@ -66,7 +69,7 @@ def book_seat(seat_number):
 
 
 def free_seat(seat_number):
-    if str(seat_number) in ["X", "S", "77D", "77E", "77F", "78D", "78E", "78F"]:
+    if str(seat_number) not in seat_lst_for_check:
         print("The seat you choose is not exist.\n")
     elif seat_lst[find_seat_index(seat_number)].status == 0:
         print("The seat you choose is already free.\n")
