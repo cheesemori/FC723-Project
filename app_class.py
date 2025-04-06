@@ -43,15 +43,15 @@ class Seat:
             self.status = 2
 
     # Passenger information setters
-    def passport_number(self, passport_number):
+    def set_passport_number(self, passport_number):
         """Store passenger's passport number"""
         self.passport_number = passport_number
 
-    def first_name(self, first_name):
+    def set_first_name(self, first_name):
         """Store passenger's first name"""
         self.first_name = first_name
 
-    def last_name(self, last_name):
+    def set_last_name(self, last_name):
         """Store passenger's last name"""
         self.last_name = last_name
 

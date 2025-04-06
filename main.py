@@ -33,7 +33,7 @@ def check_availability(seat_number):
             print("The seat you choose is available.\n")
         elif seat.status == 1:
             # Display booking details with blue text (ANSI escape code \033[34m)
-            print(f"The seat... \033[34m{seat.first_name} {seat.last_name}\033[0m\n")
+            print(f"The seat you choose is already occupied. The person who reserved the seat is \033[34m{seat_lst[find_seat_index(seat_number)].first_name} {seat_lst[find_seat_index(seat_number)].last_name}\033[0m\n")
     else:
         print("The seat you choose does not exist.\n")
 
@@ -45,16 +45,15 @@ def check_seat():
     for i in range(4):  # 4 vertical blocks
         for j in range(7):  # 7 rows
             for k in range(20):  # 20 columns
-                current = seat_lst[lst_index]
-                if current in seat_lst_for_check:
+                if seat_lst[lst_index] not in ["X", "S"]:
                     # Valid seat with color coding
-                    if current.status == 0:
-                        print(f"\033[32m{current}\033[0m\t", end="   ")  # Green
-                    else:
-                        print(f"\033[31m{current}\033[0m\t", end="   ")  # Red
+                    if seat_lst[lst_index].status == 0:
+                        print(f"\033[92m{seat_lst[lst_index]}\033[0m\t", end="   ")  # Green
+                    elif seat_lst[lst_index].status == 1:
+                        print(f"\033[91m{seat_lst[lst_index]}\033[0m\t", end="   ")  # Red
                 else:
                     # Non-seat area (X/S) with default color
-                    print(f"\033[0m{current}\033[0m\t", end="   ")
+                    print(f"{seat_lst[lst_index]}\t", end="   ")
                 lst_index += 1
             print("\n", end="")
         print("\n")
@@ -76,14 +75,13 @@ def book_seat(seat_number):
     elif seat_lst[find_seat_index(seat_number)].status == 1:
         print("Already occupied\n")
     else:
-        seat = seat_lst[find_seat_index(seat_number)]
         # Collect passenger information
-        seat.passport_number(input("Passport: "))
-        seat.first_name(input("First name: "))
-        seat.last_name(input("Last name: "))
-        seat.turn_occupied()
+        seat_lst[find_seat_index(seat_number)].set_passport_number(input("Please enter your passport number: "))
+        seat_lst[find_seat_index(seat_number)].set_first_name(input("First name: "))
+        seat_lst[find_seat_index(seat_number)].set_last_name(input("Last name: "))
+        seat_lst[find_seat_index(seat_number)].turn_occupied()
         # Display booking reference in yellow (\033[93m)
-        print(f"Booked. Reference: \033[93m{seat.reference_number}\033[0m\n")
+        print(f"Booked. Reference: \033[93m{seat_lst[find_seat_index(seat_number)].reference_number}\033[0m\n")
 
 
 def free_seat(seat_number):
