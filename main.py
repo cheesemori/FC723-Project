@@ -65,7 +65,7 @@ def find_seat_index(seat_number):
     col = int(seat_number[:-1])  # Numeric part
     # Mapping of rows to vertical positions
     row_map = {"A": 0, "B": 1, "C": 2, "D": 4, "E": 5, "F": 6}
-    return row_map[row] * 20 + ((col - 1) % 20)  # Position calculation
+    return row_map[row]*20+((col-1)%20)+(col-1)//20*140  # Position calculation
 
 
 def book_seat(seat_number):
@@ -124,7 +124,6 @@ def main():
     else:
         print("Invalid choice")
         main()
-
 
 # Start application
 main()
