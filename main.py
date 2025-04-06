@@ -1,113 +1,132 @@
-import app_class as c
+# Main application logic for seat management system
 
+import app_class as c  # Import seat class module
 
-# 示例输出
+# Initialize seat data structures
+seat_lst = []  # Master list containing all seat objects and markers (X/S)
+seat_lst_for_check = []  # List of valid seat numbers for quick validation
 
-
-seat_lst = []
-seat_lst_for_check = []
-
-for n in range(0, 4):
-    for row in ["A", "B", "C", "X", "D", "E", "F"]:
+# Populate seat layout according to Burak757 specifications
+for n in range(0, 4):  # 4 blocks of seats
+    for row in ["A", "B", "C", "X", "D", "E", "F"]:  # Seat rows
         if row == "X":
-            for i in range(20):
-                seat_lst.append("X")
+            # Add 20 'X' markers for floor island
+            seat_lst.extend(["X"] * 20)
         else:
+            # Generate seat numbers for valid rows
             for col in range(n * 20 + 1, (n + 1) * 20 + 1):
                 seat_no = str(col) + row
                 if seat_no in ["77D", "77E", "77F", "78D", "78E", "78F"]:
-                    seat_lst.append("S")
+                    seat_lst.append("S")  # Storage areas
                 else:
+                    # Create Seat object and track valid seats
                     seat_lst.append(seat_no)
-                    seat_lst[-1] = c.Seat(seat_no)
+                    seat_lst[-1] = c.Seat(seat_no)  # Replace string with Seat instance
                     seat_lst_for_check.append(seat_no)
 
 
 def check_availability(seat_number):
+    """Check and display availability status of a specific seat"""
     if seat_number in seat_lst_for_check:
-        if seat_lst[find_seat_index(seat_number)].status == 0:
+        seat = seat_lst[find_seat_index(seat_number)]
+        if seat.status == 0:
             print("The seat you choose is available.\n")
-        elif seat_lst[find_seat_index(seat_number)].status == 1:
-            print(f"The seat you choose is already occupied. The person who reserved the seat is \033[34m{seat_lst[find_seat_index(seat_number)].first_name} {seat_lst[find_seat_index(seat_number)].last_name}\033[0m\n")
+        elif seat.status == 1:
+            # Display booking details with blue text (ANSI escape code \033[34m)
+            print(f"The seat... \033[34m{seat.first_name} {seat.last_name}\033[0m\n")
     else:
-        print("The seat you choose is not exist.\n")
+        print("The seat you choose does not exist.\n")
 
 
 def check_seat():
+    """Display color-coded seat map using ANSI escape codes"""
     lst_index = 0
-    print(f"All seats are shown below where Green stands for free and Red stands for occupied.")
-    for i in range(4):
-        for j in range(7):
-            for k in range(20):
-                if seat_lst[lst_index] in seat_lst_for_check:
-                    if seat_lst[lst_index].status == 0:
-                        print(f"\033[32m{seat_lst[lst_index]}\033[0m\t")
-                    elif seat_lst[lst_index].status == 1:
-                        print(f"\033[31m{seat_lst[lst_index]}\033[0m\t")
+    print("All seats shown (Green=Available, Red=Occupied)")
+    for i in range(4):  # 4 vertical blocks
+        for j in range(7):  # 7 rows
+            for k in range(20):  # 20 columns
+                current = seat_lst[lst_index]
+                if current in seat_lst_for_check:
+                    # Valid seat with color coding
+                    if current.status == 0:
+                        print(f"\033[32m{current}\033[0m\t", end="   ")  # Green
+                    else:
+                        print(f"\033[31m{current}\033[0m\t", end="   ")  # Red
                 else:
-                    print(f"{seat_lst[lst_index]}\t", end="   ")
+                    # Non-seat area (X/S) with default color
+                    print(f"\033[0m{current}\033[0m\t", end="   ")
                 lst_index += 1
             print("\n", end="")
         print("\n")
 
 
 def find_seat_index(seat_number):
-    row = str(seat_number)[-1]
-    col = int(str(seat_number)[:-1])
-    myth_dict = {"A": 0, "B": 1, "C": 2, "D": 4, "E": 5, "F": 6}
-    return myth_dict[row] * 20 + ((col - 1) % 20)
-
+    """Calculate index position in seat_lst from seat number"""
+    row = seat_number[-1]  # Last character (A-F)
+    col = int(seat_number[:-1])  # Numeric part
+    # Mapping of rows to vertical positions
+    row_map = {"A": 0, "B": 1, "C": 2, "D": 4, "E": 5, "F": 6}
+    return row_map[row] * 20 + ((col - 1) % 20)  # Position calculation
 
 
 def book_seat(seat_number):
+    """Handle seat booking process"""
     if str(seat_number) not in seat_lst_for_check:
-        print("The seat you choose is not exist.\n")
+        print("Invalid seat\n")
     elif seat_lst[find_seat_index(seat_number)].status == 1:
-        print("The seat you choose is already occupied.\n")
+        print("Already occupied\n")
     else:
-        seat_lst[find_seat_index(seat_number)].passport_number(input("Please enter your passport number: "))
-        seat_lst[find_seat_index(seat_number)].first_name(input("Please enter your first name: "))
-        seat_lst[find_seat_index(seat_number)].last_name(input("Please enter your last name: "))
-        seat_lst[find_seat_index(seat_number)].turn_occupied()
-        print(f"The seat you choose is now booked.\nThe reference of your seat is \033[93m{seat_lst[find_seat_index(seat_number)].reference_number}\033[0m\n")
+        seat = seat_lst[find_seat_index(seat_number)]
+        # Collect passenger information
+        seat.passport_number(input("Passport: "))
+        seat.first_name(input("First name: "))
+        seat.last_name(input("Last name: "))
+        seat.turn_occupied()
+        # Display booking reference in yellow (\033[93m)
+        print(f"Booked. Reference: \033[93m{seat.reference_number}\033[0m\n")
 
 
 def free_seat(seat_number):
+    """Handle seat release process"""
     if str(seat_number) not in seat_lst_for_check:
-        print("The seat you choose is not exist.\n")
+        print("Invalid seat\n")
     elif seat_lst[find_seat_index(seat_number)].status == 0:
-        print("The seat you choose is already free.\n")
+        print("Already free\n")
     else:
-        seat_lst[find_seat_index(seat_number)].turn_available()
-        print("The seat you choose is now free.\n")
-        seat_lst[find_seat_index(seat_number)].information_clear()
+        seat = seat_lst[find_seat_index(seat_number)]
+        seat.turn_available()
+        seat.information_clear()
+        print("Seat freed\n")
 
 
 def main():
-    print("Welcome to Apache flight booking system!")
-    print("1. Check availability of seat.")
-    print("2. Book a seat.")
-    print("3. Free a seat.")
-    print("4. Show booking status.")
+    """Main menu system using recursive calls"""
+    print("Welcome to Apache Booking System")
+    print("1. Check availability")
+    print("2. Book seat")
+    print("3. Free seat")
+    print("4. Show seats")
     print("5. Exit")
-    user_option = input("Please choose an option:")
-    if user_option == "1":
-        check_availability(input("Please enter the seat number you want to check:"))
+
+    choice = input("Choose option: ")
+    if choice == "1":
+        check_availability(input("Seat number: "))
+        main()  # Recursive recall
+    elif choice == "2":
+        book_seat(input("Seat number: "))
         main()
-    elif user_option == "2":
-        book_seat(input("Please enter the seat number you want to book:"))
+    elif choice == "3":
+        free_seat(input("Seat number: "))
         main()
-    elif user_option == "3":
-        free_seat(input("Please enter the seat number you want to free:"))
-        main()
-    elif user_option == "4":
+    elif choice == "4":
         check_seat()
         main()
-    elif user_option == "5":
-        print("Thank you for using Apache flight booking system!")
+    elif choice == "5":
         exit()
     else:
-        print("Invalid option, please try again.")
+        print("Invalid choice")
         main()
 
+
+# Start application
 main()
