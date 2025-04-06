@@ -1,7 +1,8 @@
 import app_class as c
-import os
 
-os.system("")
+
+# 示例输出
+
 
 seat_lst = []
 seat_lst_for_check = []
@@ -27,7 +28,7 @@ def check_availability(seat_number):
         if seat_lst[find_seat_index(seat_number)].status == 0:
             print("The seat you choose is available.\n")
         elif seat_lst[find_seat_index(seat_number)].status == 1:
-            print("The seat you choose is already occupied.\n")
+            print(f"The seat you choose is already occupied. The person who reserved the seat is \033[34m{seat_lst[find_seat_index(seat_number)].first_name} {seat_lst[find_seat_index(seat_number)].last_name}\033[0m\n")
     else:
         print("The seat you choose is not exist.\n")
 
@@ -40,9 +41,9 @@ def check_seat():
             for k in range(20):
                 if seat_lst[lst_index] in seat_lst_for_check:
                     if seat_lst[lst_index].status == 0:
-                        print(f"\033[92m{seat_lst[lst_index]}\033[0m\t", end="   ")
+                        print(f"\033[32m{seat_lst[lst_index]}\033[0m\t")
                     elif seat_lst[lst_index].status == 1:
-                        print(f"\033[91m{seat_lst[lst_index]}\033[0m\t", end="   ")
+                        print(f"\033[31m{seat_lst[lst_index]}\033[0m\t")
                 else:
                     print(f"{seat_lst[lst_index]}\t", end="   ")
                 lst_index += 1
@@ -64,8 +65,11 @@ def book_seat(seat_number):
     elif seat_lst[find_seat_index(seat_number)].status == 1:
         print("The seat you choose is already occupied.\n")
     else:
+        seat_lst[find_seat_index(seat_number)].passport_number(input("Please enter your passport number: "))
+        seat_lst[find_seat_index(seat_number)].first_name(input("Please enter your first name: "))
+        seat_lst[find_seat_index(seat_number)].last_name(input("Please enter your last name: "))
         seat_lst[find_seat_index(seat_number)].turn_occupied()
-        print("The seat you choose is now booked.\n")
+        print(f"The seat you choose is now booked.\nThe reference of your seat is \033[93m{seat_lst[find_seat_index(seat_number)].reference_number}\033[0m\n")
 
 
 def free_seat(seat_number):
@@ -76,6 +80,7 @@ def free_seat(seat_number):
     else:
         seat_lst[find_seat_index(seat_number)].turn_available()
         print("The seat you choose is now free.\n")
+        seat_lst[find_seat_index(seat_number)].information_clear()
 
 
 def main():
